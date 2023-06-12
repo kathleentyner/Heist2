@@ -72,9 +72,7 @@ while (true){
 
  Console.WriteLine("Enter the name of a new crew member.");
  string Name = Console.ReadLine();
- if (Name == ""){// Continue the above action and allow the user to enter as many crew members as they like to the robbersList until they enter a blank name before continuing.
- break;
- }
+
 Console.WriteLine($"What is {Name}'s speciality? Choose 1 for hacker (Disables alarms), 2 for muscle (Disarms guards), or 3 for lock specialist (cracks vault)");
 
 int Speciality= Convert.ToInt32(Console.ReadLine());
@@ -140,12 +138,49 @@ Random random = new Random();
 
     }
 
+// Print out a report of the rolodex that includes each person's name, specialty, skill level, and cut. Include an index in the report for each operative so that the user can select them by that index in the next step. (You may want to update the IRobber interface and/or the implementing classes to be able to print out the specialty)
+Console.WriteLine("Select your robbery team"); 
+int totalCut = 0;
+List<IRobbers> team = new List<IRobbers>();
 
 
+while(true){
 
-    
+for(int i = 0; i< robbersList.Count; i++){
+if(!team.Contains(robbersList[i]) && ( robbersList[i].PercentageCut + totalCut) < 100){
+Console.WriteLine("**********************");    
+Console.WriteLine($"Press {i+1} to choose robber");
+Console.WriteLine($"{robbersList[i].Name}");
+Console.WriteLine($"{robbersList[i].Type}");
+Console.WriteLine($"{robbersList[i].SkillLevel}");
+Console.WriteLine($"{robbersList[i].PercentageCut}");
+Console.WriteLine("**********************");
+}}
 
-}}}
+string? selection = Console.ReadLine();
+team.Add(robbersList[int.Parse(selection) - 1]);
+totalCut = team.Sum(x => x.PercentageCut);
+Console.WriteLine(totalCut); 
+if(selection == ""){
+    break;
+
+}
+
+foreach (IRobbers robber in team){
+    robber.PerformSkill(bank);
+}
+if (bank.IsSecure())
+{
+    Console.WriteLine("Failure");
+}
+    else {
+        Console.WriteLine("The heist was a success");
+        int myCut = 100- team.Sum(x => x.PercentageCut);
+        team.ForEach(x => Console.WriteLine($"Well done {x.Name}. Your take is {(bank.CashOnHand * x.PercentageCut/100)}"));
+        Console.WriteLine($"Our take is {(bank.CashOnHand * myCut)/100}");
+}}}}}
+
+
 
 // Now that we have a clue what kind of security we're working with, we can try to built out the perfect crew.
 
